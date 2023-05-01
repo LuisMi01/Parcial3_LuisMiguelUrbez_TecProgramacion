@@ -1,32 +1,15 @@
 package org.example;
 
 public class Canoe extends Ship {
-    int length = 2;
-    int width = 1;
 
-    public Canoe(Point startPoint, CardinalPoints direction) {
-        super(2, startPoint, calculateEndPoint(startPoint, direction), direction);
+    public static final int size = 5;
+
+    public Canoe(Point startPoint, Point endPoint, CardinalPoints direction) {
+        super(size, startPoint, endPoint, direction);
     }
 
-    private static Point calculateEndPoint(Point startPoint, CardinalPoints direction) {
-        int x = startPoint.getX();
-        int y = startPoint.getY();
-
-        switch (direction) {
-            case NORTH:
-                y--;
-                break;
-            case SOUTH:
-                y++;
-                break;
-            case EAST:
-                x++;
-                break;
-            case WEST:
-                x--;
-                break;
-        }
-
-        return new Point(x, y);
+    @Override
+    public String toString() {
+        return "Canoa, size: " + size + ", start point: " + startPoint.toString() + ", end point: " + endPoint.toString() + ", direction: " + direction.toString();
     }
 }

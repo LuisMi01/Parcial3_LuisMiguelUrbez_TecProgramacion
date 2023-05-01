@@ -68,7 +68,7 @@ public class User {
                     int y = teclado.nextInt();
                     System.out.println("El barco esta en la posicion -> " + "x: " + x + " y: " + y);
                     Point puntoInicial = new Point(x, y);
-                    Ships.add(new Canoe(puntoInicial, CardinalPoints.NORTH));
+                    Ships.add(new Canoe(puntoInicial, calculateEndPoint(puntoInicial, 1, CardinalPoints.SOUTH), CardinalPoints.SOUTH));
                     break;
 
                 case 2:
@@ -81,7 +81,7 @@ public class User {
                     CardinalPoints direccionF = CardinalPoints.valueOf(teclado.next().toUpperCase());
                     System.out.println("El barco esta en la posicion -> " + "x: " + x1 + " y: " + y1 + " en la direccion:" + direccionF);
                     Point puntoInicialF = new Point(x1, y1);
-                    Ships.add(new Frigate(puntoInicialF, direccionF));
+                    Ships.add(new Frigate(puntoInicialF, calculateEndPoint(puntoInicialF, 3, direccionF) ,direccionF));
                     break;
 
                 case 3:
@@ -124,12 +124,47 @@ public class User {
         }
         return new Point(x, y);
     }
-    
-
-    public void colocarBarcos() {
 
 
+    public void colocarBarcosEnTablero(Ship ship, int fila, int columna, CardinalPoints direccion) throws IllegalArgumentException {
+        int longitud = ship.getSize();
+        int finFila = fila;
+        int finColumna = columna;
+
+        switch (direccion) {
+            case NORTH:
+                finFila -= longitud - 1;
+                break;
+            case SOUTH:
+                finFila += longitud - 1;
+                break;
+            case EAST:
+                finColumna += longitud - 1;
+                break;
+            case WEST:
+                finColumna -= longitud - 1;
+                break;
+        }
+
+        if (finFila < 0 || finFila >= filas || finColumna < 0 || finColumna >= columnas) {
+            throw new IllegalArgumentException("Coordenadas inválidas para el tamaño del barco y la dirección especificada.");
+        }
+
+        for (int i = fila; i <= finFila; i++) {
+            for (int j = columna; j <= finColumna; j++) {
+                if (tablero[i][j] != 0) {
+                    throw new IllegalArgumentException("Las coordenadas especificadas ya están ocupadas.");
+                }
+            }
+        }
+
+        for (int i = fila; i <= finFila; i++) {
+            for (int j = columna; j <= finColumna; j++) {
+                tablero[i][j] = ship instanceof Portaaviones ? 'P' : (ship instanceof Fragata ? 'F' : 'C');
+            }
+        }
     }
+
 
     public boolean attack(Point shot_point, User user) {
 
