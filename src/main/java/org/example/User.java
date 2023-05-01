@@ -2,22 +2,20 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class User {
 
     Scanner teclado = new Scanner(System.in);
-
     boolean alive;
     ArrayList<Ship> Ships = new ArrayList<Ship>();
-
     int filas, columnas;
     public int [][] tablero = new int[filas][columnas];
-
     public static final String canoa = "C";
     public static final String fragata = "F";
     public static final String portaaviones = "P";
+    CardinalPoints CardinalPoints;
+
 
     public User(Ship[] ships) throws IllegalArgumentException {
         if (ships == null || ships.length == 0) {
@@ -31,8 +29,6 @@ public class User {
         this.Ships = new ArrayList<>(Arrays.asList(ships));
         this.alive = true;
     }
-
-
     public void crearTablero(){
         int capacidad = teclado.nextInt();
         tablero = new int[capacidad][capacidad];
@@ -53,153 +49,90 @@ public class User {
         System.out.println("---------------------------------");
     }
 
-    public void crearBarco() {
-        Scanner scanner = new Scanner(System.in);
-
-        if (Ships.size() < 3) {
-            System.out.println("Elija el tipo de barco que desea crear:");
-            System.out.println("1 - Battleship");
-            System.out.println("2 - Canoe");
-            System.out.println("3 - Frigate");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
-
-            System.out.println("Introduzca la coordenada X:");
-            int x = scanner.nextInt();
-            scanner.nextLine();
-            System.out.println("Introduzca la coordenada Y:");
-            int y = scanner.nextInt();
-            scanner.nextLine();
-            System.out.println("Introduzca la dirección en la que desea colocar el barco (NORTH, SOUTH, EAST, WEST):");
-            String direccion = scanner.nextLine();
-
-            CardinalPoints direccionP = CardinalPoints.valueOf(direccion.toUpperCase());
+    public void crearBarcos() {
+        Scanner teclado = new Scanner(System.in);
+        System.out.println("Se van a crear los baros del jugador (maximo 3 barcos)");
+        for (int i = 0; i < 2; i++) {
+            System.out.println("Selecione uno de los barcos disponibles:");
+            System.out.println("1. Canoa");
+            System.out.println("2. Fragata");
+            System.out.println("3. Portaaviones");
+            int opcion = teclado.nextInt();
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Has elegido el portaaviones");
-                    System.out.println("Introduce la longitud del barco:");
-                    int length = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la anchura del barco:");
-                    int width = scanner.nextInt();
-                    scanner.nextLine();
-                    Ships.add(new Battleship(new Point(x, y), calculateEndPoint(new Point(x, y), direccionP, 5), direccionP));
+                    System.out.println("Ingrese la posicion inicial de la canoa");
+                    System.out.println("Ingrese la fila");
+                    int x = teclado.nextInt();
+                    System.out.println("Ingrese la columna");
+                    int y = teclado.nextInt();
+                    System.out.println("El barco esta en la posicion -> " + "x: " + x + " y: " + y);
+                    Point puntoInicial = new Point(x, y);
+                    Ships.add(new Canoe(puntoInicial, CardinalPoints.NORTH));
                     break;
+
                 case 2:
-                    System.out.println("Has elegido la canoa");
-                    System.out.println("Introduce la longitud del barco:");
-                    int length2 = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la anchura del barco:");
-                    int width2 = scanner.nextInt();
-                    scanner.nextLine();
-                    Ships.add(new Canoe(length2, new Point(x, y), direccionP, length2, width2));
+                    System.out.println("Ingrese la posicion inicial de la fragata");
+                    System.out.println("Ingrese la fila");
+                    int x1 = teclado.nextInt();
+                    System.out.println("Ingrese la columna");
+                    int y1 = teclado.nextInt();
+                    System.out.println("Introduce la direccion en la que quieres colocar el barco (SOUTH, NORTH, EAST, WEST)");
+                    CardinalPoints direccionF = CardinalPoints.valueOf(teclado.next().toUpperCase());
+                    System.out.println("El barco esta en la posicion -> " + "x: " + x1 + " y: " + y1 + " en la direccion:" + direccionF);
+                    Point puntoInicialF = new Point(x1, y1);
+                    Ships.add(new Frigate(puntoInicialF, direccionF));
                     break;
+
                 case 3:
-                    System.out.println("Has elegido la fragata");
-                    System.out.println("Introduce la longitud del barco:");
-                    int length3 = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Introduce la anchura del barco:");
-                    int width3 = scanner.nextInt();
-                    scanner.nextLine();
-                    Ships.add(new Frigate(length3, new Point(x, y), direccionP, length3, width3));
-                    break;
-                default:
-                    System.out.println("Opción no válida");
+                    System.out.println("Ingrese la posicion inicial del portaaviones");
+                    System.out.println("Ingrese la fila");
+                    int x2 = teclado.nextInt();
+                    System.out.println("Ingrese la columna");
+                    int y2 = teclado.nextInt();
+                    System.out.println("Introduce la direccion en la que quieres colocar el barco (SOUTH, NORTH, EAST, WEST)");
+                    CardinalPoints direccionP = CardinalPoints.valueOf(teclado.next().toUpperCase());
+                    System.out.println("El barco esta en la posicion -> " + "x: " + x2 + " y: " + y2 + " en la direccion:" + direccionP);
+                    Point puntoInicialP = new Point(x2, y2);
+                    Ships.add(new Battleship(puntoInicialP, calculateEndPoint(puntoInicialP, 5, direccionP),direccionP));
                     break;
             }
-        } else {
-            System.out.println("Ya has creado el máximo de barcos permitidos");
         }
     }
 
+    public Point calculateEndPoint(Point startPoint, int length, CardinalPoints direction) {
+        int x = startPoint.getX() + length - 1;
+        int y = startPoint.getY();
+
+        switch (direction) {
+            case NORTH:
+                x = startPoint.getX();
+                y = startPoint.getY() - length + 1;
+                break;
+            case SOUTH:
+                x = startPoint.getX();
+                y = startPoint.getY() + length - 1;
+                break;
+            case EAST:
+                x = startPoint.getX() + length - 1;
+                y = startPoint.getY();
+                break;
+            case WEST:
+                x = startPoint.getX() - length + 1;
+                y = startPoint.getY();
+                break;
+        }
+        return new Point(x, y);
+    }
+    
 
     public void colocarBarcos() {
-        for (Ship barco : Barcos) {
-            if (barco instanceof battleship) {
-                battleship portaaviones = (battleship) barco;
-                if (portaaviones.getDirection() == CardinalPoints.NORTH) {
-                    for (int i = 0; i < 5; i++) {
-                        tablero[portaaviones.getCoordenadaX()][portaaviones.getCoordenadaY() + i] = 5;
-                    }
-                } else if (portaaviones.getDirection() == CardinalPoints.SOUTH) {
-                    for (int i = 0; i < 5; i++) {
-                        tablero[portaaviones.getCoordenadaX()][portaaviones.getCoordenadaY() - i] = 5;
-                    }
-                } else if (portaaviones.getDirection() == CardinalPoints.EAST) {
-                    for (int i = 0; i < 5; i++) {
-                        tablero[portaaviones.getCoordenadaX() + i][portaaviones.getCoordenadaY()] = 5;
-                    }
-                } else if (portaaviones.getDirection() == CardinalPoints.WEST) {
-                    for (int i = 0; i < 5; i++) {
-                        tablero[portaaviones.getCoordenadaX() - i][portaaviones.getCoordenadaY()] = 5;
-                    }
-                }
-            } else if (barco instanceof Frigate) {
-                Frigate fragata = (Frigate) barco;
-                if (fragata.getDirection() == CardinalPoints.NORTH) {
-                    for (int i = 0; i < 3; i++) {
-                        tablero[fragata.getCoordenadaX()][fragata.getCoordenadaY() + i] = 3;
-                    }
-                } else if (fragata.getDirection() == CardinalPoints.SOUTH) {
-                    for (int i = 0; i < 3; i++) {
-                        tablero[fragata.getCoordenadaX()][fragata.getCoordenadaY() - i] = 3;
-                    }
-                } else if (fragata.getDirection() == CardinalPoints.EAST) {
-                    for (int i = 0; i < 3; i++) {
-                        tablero[fragata.getCoordenadaX() + i][fragata.getCoordenadaY()] = 3;
-                    }
-                } else if (fragata.getDirection() == CardinalPoints.WEST) {
-                    for (int i = 0; i < 3; i++) {
-                        tablero[fragata.getCoordenadaX() - i][fragata.getCoordenadaY()] = 3;
-                    }
-                }
-            } else if (barco instanceof Canoe) {
-                Canoe canoa = (Canoe) barco;
-                tablero[canoa.getCoordenadaX()][canoa.getCoordenadaY()] = 1;
-            }
-        }
+
+
     }
 
-    public boolean attack(Point shot_point, User user) throws Exception {
-        boolean acierto = false;
-        try {
-            for (Ship ship : user.getBarcos()) {
-                if (ship instanceof Canoe) {
-                    if (tablero[shot_point.getX()][shot_point.getY()] == canoa){
-                        acierto = true;
-                        ship.get_shot2(shot_point);
-                        ship.is_sunk();
-                        break;
-                    } else {
-                        acierto = false;
-                    }
-                } else if (ship instanceof Frigate) {
-                    if (tablero[shot_point.getX()][shot_point.getY()] == fragata){
-                        acierto = true;
-                        ship.get_shot2(shot_point);
-                        ship.is_sunk();
-                        break;
-                    } else {
-                        acierto = false;
-                    }
-                } else if (ship instanceof battleship) {
-                    if (tablero[shot_point.getX()][shot_point.getY()] == portaaviones){
-                        acierto = true;
-                        ship.get_shot2(shot_point);
-                        ship.is_sunk();
-                        break;
-                    } else {
-                        acierto = false;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Elije un punto de disparo disponible.");
-        }
-        return acierto;
+    public boolean attack(Point shot_point, User user) {
+
     }
 
 

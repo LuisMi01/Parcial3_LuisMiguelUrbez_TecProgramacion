@@ -2,16 +2,12 @@ package org.example;
 
 import java.util.Scanner;
 
-public class Ship {
-    private int size;
-    private int hits;
-    private Point startPoint;
-    private Point endPoint;
-    private CardinalPoints direction;
-
-    public Ship() {
-        // Constructor sin argumentos
-    }
+public abstract class Ship {
+    protected int size;
+    protected int hits;
+    protected Point startPoint;
+    protected Point endPoint;
+    protected CardinalPoints direction;
 
     public Ship(int size, Point startPoint, Point endPoint, CardinalPoints direction) {
         if (!isValidShip(size, startPoint, endPoint)) {
@@ -23,6 +19,10 @@ public class Ship {
         this.direction = direction;
         this.hits = 0;
     }
+
+    public Ship() {
+    }
+
 
     public boolean isSunk() {
         return hits == size;
@@ -67,13 +67,11 @@ public class Ship {
         return size == length;
     }
 
-    public void setDirection(CardinalPoints direction) {
-        this.direction = direction;
-    }
 
-    // getters and setters
-    public CardinalPoints getDirection() {
-        return direction;
+
+    // setters and getters
+    public void setEndPoint(Point endPoint) {
+        this.endPoint = endPoint;
     }
 
     public int getSize() {
@@ -92,23 +90,24 @@ public class Ship {
         this.hits = hits;
     }
 
+    public Point getEndPoint() {
+        return endPoint;
+    }
+    public CardinalPoints getDirection() {
+        return direction;
+    }
+
     public Point getStartPoint() {
         return startPoint;
+    }
+    public void setDirection(CardinalPoints direction) {
+        this.direction = direction;
     }
 
     public void setStartPoint(Point startPoint) {
         this.startPoint = startPoint;
     }
-
-    public Point getEndPoint() {
-        return endPoint;
-    }
-
-    public void setEndPoint(Point endPoint) {
-        this.endPoint = endPoint;
-    }
 }
-
 
     /*public void get_shot2(Point shot_point) {
         try {
