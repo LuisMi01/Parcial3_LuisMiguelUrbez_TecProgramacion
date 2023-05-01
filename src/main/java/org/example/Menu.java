@@ -1,42 +1,77 @@
 package org.example;
-
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
 public class Menu {
-    Scanner teclado = new Scanner(System.in);
-    User jugador1 = new User(true, 3, 1, 1);
-    User jugador2 = new User(true, 3, 1, 1);
 
-    public void menu(){
-        System.out.println("BIENVENIDO AL JUEGO BATTLESHIP");
-        Scanner teclado = new Scanner(System.in);
-        System.out.println("""
-                Ambos jugadores van a empezar con 3 barcos,
-                 cada uno posicionara un tipo de barco en la casilla y direccion que elija
-                """);
+    public void menu() {
+
+        Scanner scanner = new Scanner(System.in);
+
+            System.out.println("CREACIÓN DEL JUGADOR");
+            System.out.println("Ingrese su nombre:");
+        String nombreJugador = scanner.nextLine();
+            System.out.println("Ingrese el número de filas del tablero:");
+        int filasTablero = scanner.nextInt();
+            System.out.println("Ingrese el número de columnas del tablero:");
+        int columnasTablero = scanner.nextInt();
+
+        User jugador = new User(true, filasTablero, columnasTablero);
 
 
-        System.out.println("Inserte el tamaño del tablero en el que se va a jugar");
-        jugador1.crearTablero();
+            System.out.println("Se va a proceder a colocar los barcos en el tablero");
+            jugador.crearBarcos();
+            jugador.colocarBarcosTablero();
+            jugador.mostrarTablero();
 
-        jugador1.mostrarTablero();
+            System.out.println("\nCREACIÓN DEL ENEMIGO");
+            System.out.println("Ingrese su nombre:");
+        String nombreEnemigo = scanner.nextLine();
 
-        System.out.println("\nSe va a proceder a elijir los barcos para los jugadores:");
-        System.out.println("Empezamos por el primer jugarp (Elija sus tres barcos)");
-        jugador1.crearBarco();
-        System.out.println("\nTurno del segundo jugador (Elija sus tres barcos)");
-        jugador2.crearBarco();
+        User enemigo = new User(true, filasTablero, columnasTablero);
 
-        System.out.println("\nSe va a proceder a colocar los barcos y mostrar ambos tableros");
+            System.out.println("Se va a proceder a colocar los barcos del enemigo en el tablero");
+            enemigo.crearBarcos();
+            enemigo.colocarBarcosTablero();
+            enemigo.mostrarTablero();
 
-        jugador1.colocarBarcos();
-        jugador2.colocarBarcos();
 
-        jugador1.mostrarTablero();
-        jugador2.mostrarTablero();
+        // Comenzar el juego
+            System.out.println("\n¡Que comience el juego!");
 
-        System.out.println("Una vez mostrados los tableros se va a proceder a jugar\n");
+        boolean jugadorGanador = false;
+        boolean enemigoGanador = false;
+
+            while(!jugadorGanador &&!enemigoGanador)
+
+        {
+
+            System.out.println("\n" + nombreJugador + ", es su turno:");
+            System.out.println("Ingrese la coordenada X del disparo:");
+            int x = scanner.nextInt();
+            System.out.println("Ingrese la coordenada Y del disparo:");
+            int y = scanner.nextInt();
+            Point coordenadasDisparoJugador = new Point(x, y);
+            jugador.attack(coordenadasDisparoJugador, jugador);
+            if (jugador.checkAllShipsSunk()) {
+                jugadorGanador = true;
+            }
+
+            // Turno del enemigo
+            System.out.println("\nTurno del enemigo:");
+            System.out.println("Ingrese la coordenada X del disparo:");
+            int x1 = scanner.nextInt();
+            System.out.println("Ingrese la coordenada Y del disparo:");
+            int y1 = scanner.nextInt();
+            Point coordenadasDisparoEnemigo = new Point(x1, y1);
+            enemigo.attack(coordenadasDisparoEnemigo, enemigo);
+            if (enemigo.checkAllShipsSunk()) {
+                enemigoGanador = true;
+            }
+
+        }
 
     }
 }
+
+

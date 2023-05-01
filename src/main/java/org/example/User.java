@@ -18,18 +18,12 @@ public class User {
     CardinalPoints CardinalPoints;
 
 
-    public User(Ship[] ships) throws IllegalArgumentException {
-        if (ships == null || ships.length == 0) {
-            throw new IllegalArgumentException("Debe haber al menos un barco en la lista.");
-        }
-        for (Ship ship : ships) {
-            if (ship == null) {
-                throw new IllegalArgumentException("La lista de barcos no puede contener valores nulos.");
-            }
-        }
-        this.Ships = new ArrayList<>(Arrays.asList(ships));
-        this.alive = true;
+    public User(boolean alive, int filas, int columnas) {
+        this.alive = alive;
+        this.filas = filas;
+        this.columnas = columnas;
     }
+
     public void crearTablero(){
         int capacidad = teclado.nextInt();
         tablero = new int[capacidad][capacidad];
@@ -127,7 +121,11 @@ public class User {
     }
 
 
-    public void colocarBarcosTablero(Ship ship, int fila, int columna, CardinalPoints direccion) throws IllegalArgumentException {
+    public void colocarBarcosTablero() throws IllegalArgumentException {
+        Ship ship = Ships.get(0);
+        int fila = ship.getStartPoint().getX();
+        int columna = ship.getStartPoint().getY();
+        CardinalPoints direccion = ship.getDirection();
         int longitud = ship.getSize();
         int finFila = fila;
         int finColumna = columna;

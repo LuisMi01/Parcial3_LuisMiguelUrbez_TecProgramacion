@@ -16,7 +16,7 @@ public interface Ship {
         boolean getShot(Point shotPoint);
 
 
-
-    }
+    CardinalPoints getDirection();
+}
 
 

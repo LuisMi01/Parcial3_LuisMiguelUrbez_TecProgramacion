@@ -38,20 +38,16 @@ public class Battleship implements Ship {
     }
 
     public void updateState(Point shot) {
-        estado estadoActual = estado.INTACTO;
         if (this.isSunk()) {
             setEstadoBarco("HUNDIDO");
         }
         if (this.isHit(shot)) {
-            this.hits++;
-            estadoActual = estado.TOCADO;
+            getShot(shot);
             setEstadoBarco("TOCADO");
             if (this.isSunk()) {
-                estadoActual = estado.HUNDIDO;
                 setEstadoBarco("HUNDIDO");
             }
         } else {
-            estadoActual = estado.AGUA;
             setEstadoBarco("AGUA");
         }
 
