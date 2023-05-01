@@ -1,28 +1,37 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class User {
 
-    boolean alive;
-    ArrayList<Ship> Barcos = new ArrayList<Ship>();
-    int numeroBarcosIniciales;
     Scanner teclado = new Scanner(System.in);
+
+    boolean alive;
+    ArrayList<Ship> Ships = new ArrayList<Ship>();
+
     int filas, columnas;
     public int [][] tablero = new int[filas][columnas];
 
-    public static final int canoa = 1;
-    public static final int fragata = 3;
-    public static final int portaaviones = 5;
+    public static final String canoa = "C";
+    public static final String fragata = "F";
+    public static final String portaaviones = "P";
 
-    public User(boolean alive, int numeroBarcosIniciales, int filas, int columnas) {
-        this.alive = alive;
-        this.numeroBarcosIniciales = numeroBarcosIniciales;
-        this.filas = filas;
-        this.columnas = columnas;
+    public User(Ship[] ships) throws IllegalArgumentException {
+        if (ships == null || ships.length == 0) {
+            throw new IllegalArgumentException("Debe haber al menos un barco en la lista.");
+        }
+        for (Ship ship : ships) {
+            if (ship == null) {
+                throw new IllegalArgumentException("La lista de barcos no puede contener valores nulos.");
+            }
+        }
+        this.Ships = new ArrayList<>(Arrays.asList(ships));
+        this.alive = true;
     }
+
 
     public void crearTablero(){
         int capacidad = teclado.nextInt();
@@ -44,56 +53,68 @@ public class User {
         System.out.println("---------------------------------");
     }
 
-    public void crearBarco(){
-        for (int i = 0; i< 3 ; i++){
-            System.out.println("Elija el tipo de barco que quiere colocar");
-            int opcion;
-            System.out.println("1. Portaaviones (5 casillas)");
-            System.out.println("2. Fragata (3 casillas)");
-            System.out.println("3. Canoa (1 casillas)");
-            opcion = teclado.nextInt();
+    public void crearBarco() {
+        Scanner scanner = new Scanner(System.in);
 
-            try {
-                switch (opcion) {
-                    case 1 -> {
-                        System.out.println("Has elegido el portaaviones");
-                        System.out.println("Introduce la coordenada X");
-                        int x = teclado.nextInt();
-                        System.out.println("Introduce la coordenada Y");
-                        int y = teclado.nextInt();
-                        System.out.println("Introduce la direccion en la que quieres colocar el barco (SOUTH, NORTH, EAST, WEST)");
-                        CardinalPoints direccionP = CardinalPoints.valueOf(teclado.next().toUpperCase());
-                        System.out.println("El barco esta en la posicion -> " + "x: " + x + " y: " + y + " en la direccion:" + direccionP);
-                        Barcos.add(new battleship(5, direccionP, 0, false, x, y, 5, 1));
-                    }
-                    case 2 -> {
-                        System.out.println("Has elegido el fragata");
-                        System.out.println("Introduce la coordenada X");
-                        int x1 = teclado.nextInt();
-                        System.out.println("Introduce la coordenada Y");
-                        int y1 = teclado.nextInt();
-                        System.out.println("Introduce la direccion en la que quieres colocar el barco (SOUTH, NORTH, EAST, WEST)");
-                        CardinalPoints direccionF = CardinalPoints.valueOf(teclado.next().toUpperCase());
-                        System.out.println("El barco esta en la posicion -> " + "x: " + x1 + " y: " + y1 + " en la direccion:" + direccionF);
-                        Barcos.add(new Frigate(3, direccionF, 0, false, x1, y1, 3, 1));
-                    }
-                    case 3 -> {
-                        System.out.println("Has elegido el canoa");
-                        System.out.println("Introduce la coordenada X");
-                        int x2 = teclado.nextInt();
-                        System.out.println("Introduce la coordenada Y");
-                        int y2 = teclado.nextInt();
-                        System.out.println("El barco esta en la posicion -> " + "x: " + x2 + " y: " + y2);
-                        Barcos.add(new Canoe(1, CardinalPoints.NORTH, 0, false, x2, y2, 1, 1));
-                    }
-                    default -> System.out.println("Debe ingresar un numero entre el 1 y 7");
-                }
-            } catch (InputMismatchException ex) {
-                System.out.println("Debes ingresar un numero.");
-                crearBarco();
+        if (Ships.size() < 3) {
+            System.out.println("Elija el tipo de barco que desea crear:");
+            System.out.println("1 - Battleship");
+            System.out.println("2 - Canoe");
+            System.out.println("3 - Frigate");
+            int opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.println("Introduzca la coordenada X:");
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("Introduzca la coordenada Y:");
+            int y = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("Introduzca la dirección en la que desea colocar el barco (NORTH, SOUTH, EAST, WEST):");
+            String direccion = scanner.nextLine();
+
+            CardinalPoints direccionP = CardinalPoints.valueOf(direccion.toUpperCase());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Has elegido el portaaviones");
+                    System.out.println("Introduce la longitud del barco:");
+                    int length = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Introduce la anchura del barco:");
+                    int width = scanner.nextInt();
+                    scanner.nextLine();
+                    Ships.add(new Battleship(new Point(x, y), calculateEndPoint(new Point(x, y), direccionP, 5), direccionP));
+                    break;
+                case 2:
+                    System.out.println("Has elegido la canoa");
+                    System.out.println("Introduce la longitud del barco:");
+                    int length2 = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Introduce la anchura del barco:");
+                    int width2 = scanner.nextInt();
+                    scanner.nextLine();
+                    Ships.add(new Canoe(length2, new Point(x, y), direccionP, length2, width2));
+                    break;
+                case 3:
+                    System.out.println("Has elegido la fragata");
+                    System.out.println("Introduce la longitud del barco:");
+                    int length3 = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Introduce la anchura del barco:");
+                    int width3 = scanner.nextInt();
+                    scanner.nextLine();
+                    Ships.add(new Frigate(length3, new Point(x, y), direccionP, length3, width3));
+                    break;
+                default:
+                    System.out.println("Opción no válida");
+                    break;
             }
+        } else {
+            System.out.println("Ya has creado el máximo de barcos permitidos");
         }
     }
+
 
     public void colocarBarcos() {
         for (Ship barco : Barcos) {
@@ -181,24 +202,6 @@ public class User {
         return acierto;
     }
 
-    public ArrayList<Ship> getBarcos() {
-        return Barcos;
-    }
-
-    public void setBarcos(ArrayList<Ship> barcos) {
-        Barcos = barcos;
-    }
-
-    public void is_alive() {
-        if (alive == true) {
-            System.out.println("El jugador esta vivo");
-        }
-    }
-    public void die(){
-        if(!alive){
-            System.out.println("El jugador ha muerto");
-        }
-    }
 
     public boolean isAlive() {
         return alive;
@@ -208,12 +211,12 @@ public class User {
         this.alive = alive;
     }
 
-    public int getNumeroBarcosIniciales() {
-        return numeroBarcosIniciales;
+    public ArrayList<Ship> getShips() {
+        return Ships;
     }
 
-    public void setNumeroBarcosIniciales(int numeroBarcosIniciales) {
-        this.numeroBarcosIniciales = numeroBarcosIniciales;
+    public void setShips(ArrayList<Ship> ships) {
+        Ships = ships;
     }
 
     public int getFilas() {

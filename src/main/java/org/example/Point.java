@@ -12,23 +12,24 @@ public class Point {
         this.y = y;
     }
 
-    public void get_ship(Point point){
-        System.out.println("El barco esta en la posicion: " + point.x + " " + point.y);
+    public int getX() {
+        return x;
     }
 
-    public int getX(){
-        return this.x;
+    public int getY() {
+        return y;
     }
 
-    public int getY(){
-        return this.y;
-    }
-
-    public void setX(int x){
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(int y){
+    public void setY(int y) {
         this.y = y;
     }
+
+    public boolean equals(Point point) {
+        return this.x == point.getX() && this.y == point.getY();
+    }
+
 }
