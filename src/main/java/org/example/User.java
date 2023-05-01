@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class User {
@@ -126,7 +127,7 @@ public class User {
     }
 
 
-    public void colocarBarcosEnTablero(Ship ship, int fila, int columna, CardinalPoints direccion) throws IllegalArgumentException {
+    public void colocarBarcosTablero(Ship ship, int fila, int columna, CardinalPoints direccion) throws IllegalArgumentException {
         int longitud = ship.getSize();
         int finFila = fila;
         int finColumna = columna;
@@ -160,7 +161,7 @@ public class User {
 
         for (int i = fila; i <= finFila; i++) {
             for (int j = columna; j <= finColumna; j++) {
-                tablero[i][j] = ship instanceof Portaaviones ? 'P' : (ship instanceof Fragata ? 'F' : 'C');
+                tablero[i][j] = ship instanceof Battleship ? 'P' : (ship instanceof Frigate ? 'F' : 'C');
             }
         }
     }
@@ -168,9 +169,55 @@ public class User {
 
     public boolean attack(Point shot_point, User user) {
 
+            int row = shot_point.getX();
+            int col = shot_point.getY();
+
+            if (row < 0 || row >= user.filas || col < 0 || col >= user.columnas) {
+                System.out.println("Disparo fuera de rango");
+                attack(shot_point, user);
+            }
+
+            if (user.tablero[row][col] != 0) {
+                System.out.println("No se puede repetir un disparo en la misma posición");
+                attack(shot_point, user);
+            }
+
+            // Buscar si el disparo impacta en alguno de los barcos del usuario
+            for (Ship ship : user.Ships) {
+                boolean hit = ship.getShot(shot_point);
+                if (hit) {
+                    // Actualizar el estado del barco y del tablero del usuario
+                    ship.updateState(shot_point);
+                    user.tablero[row][col] = 1;
+                    if (ship.isSunk()) {
+                        System.out.println("¡Hundiste un barco!");
+                    }
+                    if (user.checkAllShipsSunk()) {
+                        // Actualizar el estado del usuario
+                        user.alive = false;
+                    }
+                    return true;
+                }
+            }
+
+            // Si el disparo no impacta en ningún barco, actualizar el tablero del usuario
+            user.tablero[row][col] = -1;
+            return false;
+        }
+
+
+
+    public boolean checkAllShipsSunk() {
+         Ships = getShips();
+        for (Ship ship : Ships) {
+            if (!ship.isSunk()) {
+                System.out.println("Aun hay barcos vivos");
+                return false;
+            }
+        }
+        System.out.println("Todos los barcos hundidos, el jugador queda eliminado");
+        return true;
     }
-
-
     public boolean isAlive() {
         return alive;
     }

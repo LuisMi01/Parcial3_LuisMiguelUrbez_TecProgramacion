@@ -1,15 +1,162 @@
 package org.example;
 
-public class Canoe extends Ship {
+public class Canoe implements Ship {
+    enum estado{
+        INTACTO,
+        TOCADO,
+        HUNDIDO,
+        AGUA
+    }
+    protected String estadoBarco;
 
-    public static final int size = 5;
+    protected int size = 1;
+    protected Point startPoint;
+    protected Point endPoint;
+    protected CardinalPoints direction;
+    protected int vida = 1;
+    protected int hits;
 
-    public Canoe(Point startPoint, Point endPoint, CardinalPoints direction) {
-        super(size, startPoint, endPoint, direction);
+    public Canoe( Point startPoint, Point endPoint, CardinalPoints direction) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.direction = direction;
+        this.hits = 0;
+    }
+
+    public boolean isSunk() {
+        return hits == size;
+    }
+
+    public boolean getShot(Point shotPoint) {
+        if (isHit(shotPoint)) {
+            hits++;
+            return true;
+        }
+        return false;
+    }
+
+    public void updateState(Point shot) {
+        Battleship.estado estadoActual = Battleship.estado.INTACTO;
+        if (this.isSunk()) {
+            setEstadoBarco("HUNDIDO");
+        }
+        if (this.isHit(shot)) {
+            this.hits++;
+            estadoActual = Battleship.estado.TOCADO;
+            setEstadoBarco("TOCADO");
+            if (this.isSunk()) {
+                estadoActual = Battleship.estado.HUNDIDO;
+                setEstadoBarco("HUNDIDO");
+            }
+        } else {
+            estadoActual = Battleship.estado.AGUA;
+            setEstadoBarco("AGUA");
+        }
+
+    }
+    private boolean isHit(Point shot) {
+        switch (this.direction) {
+            case NORTH:
+                if (shot.getX() != this.startPoint.getX()) {
+                    return false;
+                }
+                for (int i = this.startPoint.getY(); i <= this.endPoint.getY(); i++) {
+                    if (shot.getY() == i) {
+                        return true;
+                    }
+                }
+                break;
+            case SOUTH:
+                if (shot.getX() != this.startPoint.getX()) {
+                    return false;
+                }
+                for (int i = this.startPoint.getY(); i >= this.endPoint.getY(); i--) {
+                    if (shot.getY() == i) {
+                        return true;
+                    }
+                }
+                break;
+            case EAST:
+                if (shot.getY() != this.startPoint.getY()) {
+                    return false;
+                }
+                for (int i = this.startPoint.getX(); i <= this.endPoint.getX(); i++) {
+                    if (shot.getX() == i) {
+                        return true;
+                    }
+                }
+                break;
+            case WEST:
+                if (shot.getY() != this.startPoint.getY()) {
+                    return false;
+                }
+                for (int i = this.startPoint.getX(); i >= this.endPoint.getX(); i--) {
+                    if (shot.getX() == i) {
+                        return true;
+                    }
+                }
+                break;
+        }
+        return false;
+    }
+
+    //get y set
+    @Override
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
-    public String toString() {
-        return "Canoa, size: " + size + ", start point: " + startPoint.toString() + ", end point: " + endPoint.toString() + ", direction: " + direction.toString();
+    public Point getStartPoint() {
+        return startPoint;
+    }
+
+    public String getEstadoBarco() {
+        return estadoBarco;
+    }
+
+    public void setEstadoBarco(String estadoBarco) {
+        this.estadoBarco = estadoBarco;
+    }
+
+    public void setStartPoint(Point startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    @Override
+    public Point getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(Point endPoint) {
+        this.endPoint = endPoint;
+    }
+
+    public CardinalPoints getDirection() {
+        return direction;
+    }
+
+    public void setDirection(CardinalPoints direction) {
+        this.direction = direction;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public int getHits() {
+        return hits;
+    }
+
+    public void setHits(int hits) {
+        this.hits = hits;
     }
 }
