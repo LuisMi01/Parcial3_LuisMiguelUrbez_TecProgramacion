@@ -11,13 +11,25 @@ public class Grafo {
 
     //Puertos
     public void agregarVertice(String vertice) {
+        System.out.println("Se va a agregar un puerto");
+        System.out.println("Ingrese el nombre del puerto: ");
+        Scanner teclado = new Scanner(System.in);
+        vertice = teclado.nextLine();
         if (!mapaVertices.containsKey(vertice)) {
             mapaVertices.put(vertice, new HashSet<Arista>());
         }
     }
 
     //camino a puertos
-    public void agregarArista(String origen, String destino, int distancia) {
+    public void agregarArista() {
+        System.out.println("Se va a agregar un camino entre puertos");
+        System.out.println("Ingrese el nombre del puerto de origen: ");
+        Scanner teclado = new Scanner(System.in);
+        String origen = teclado.nextLine();
+        System.out.println("Ingrese el nombre del puerto de destino: ");
+        String destino = teclado.nextLine();
+        System.out.println("Ingrese la distancia entre los puertos: ");
+        int distancia = teclado.nextInt();
         agregarVertice(origen);
         agregarVertice(destino);
 
@@ -28,9 +40,11 @@ public class Grafo {
         mapaVertices.get(destino).add(arista2);
     }
 
-
     //barrido
-    public List<String> barridoProfundidad(String inicio) {
+    public List<String> barridoProfundidad() {
+        System.out.println("Se va a realizar un barrido en profundidad, ingrese el puerto de inicio:");
+        Scanner teclado = new Scanner(System.in);
+        String inicio = teclado.nextLine();
         Set<String> visitados = new HashSet<String>();
         List<String> resultado = new ArrayList<String>();
         barridoProfundidadRecursivo(inicio, visitados, resultado);
@@ -51,7 +65,13 @@ public class Grafo {
     }
 
     //buscar camino mas corto
-    public List<String> caminoMasCorto(String origen, String destino) {
+    public List<String> caminoMasCorto() {
+        Scanner teclado = new Scanner(System.in);
+        System.out.println("Ingrese el puerto de origen: ");
+        String origen = teclado.nextLine();
+        System.out.println("Ingrese el puerto de destino: ");
+        String destino = teclado.nextLine();
+
         Map<String, Integer> distancia = new HashMap<String, Integer>();
         Map<String, String> padre = new HashMap<String, String>();
         PriorityQueue<String> cola = new PriorityQueue<String>(new ComparadorDistancia(distancia));
@@ -96,6 +116,7 @@ public class Grafo {
 
     //Eliminar el vertice con mas aristas
     public void eliminarVerticeConMasAristas() {
+        System.out.println("Se va a eliminar el puerto con mas caminos en el");
         String verticeConMasAristas = null;
         int maxAristas = -1;
 
@@ -123,6 +144,7 @@ public class Grafo {
 
     //Imprimir el grafo completo
     public void imprimirGrafo(){
+        System.out.println("Se va a imprimir el grafo completo");
         System.out.println("Vertices: ");
         for (String vertice : mapaVertices.keySet()) {
             System.out.print(vertice + " ");
